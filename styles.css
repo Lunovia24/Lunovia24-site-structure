@@ -204,11 +204,16 @@ html {
 
 /* Aplica animația imaginii */
 #logo {
-    cursor: pointer; /* Arată cursorul de tip pointer pentru interactivitate */
+    cursor: cursor; /* Arată cursorul de tip pointer pentru interactivitate */
     transition: transform 1s ease; /* Animație lină */
 }
 
 /* Stil pentru a face click-ul inactiv în timpul animației */
 #logo.no-click {
     pointer-events: none; /* Dezactivează interacțiunea cu imaginea */
+}
+
+.no-click {
+    pointer-events: none;
+    opacity: 0.6;
 }
