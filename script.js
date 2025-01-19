@@ -1,97 +1,214 @@
-const complimentsContainer = document.getElementById("compliments");
-const overlay = document.getElementById("recaptcha-overlay");
-const mainContent = document.getElementById("main-content");
-const recaptcha = document.getElementById("recaptcha");
+/* Body */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Blochează scroll-ul inițial */
+    background: #f0f0f0; /* Fundal pentru întreaga pagină */
+}
 
-// Listă extinsă de complimente corecte și greșite
-const compliments = [
-    { text: "Aveți un sens de stil uimitor!", correct: false },
-    { text: "Sunteți niște persoane incredibil de grijulii!", correct: true },
-    { text: "Creativitatea voastră este de inspirat!", correct: false },
-    { text: "Faceți lumea un loc mai bun!", correct: false },
-    { text: "Vă puneți sufletul în tot ce faceți!", correct: true },
-    { text: "Zâmbetul vostru luminează încăperea!", correct: true },
-    { text: "Ați adus un zâmbet pe fața mea astăzi!", correct: false },
-    { text: "Suntem norocoși să vă avem!", correct: false },
-];
+/* Header */
+header {
+    background: #333;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    font-family: 'Apricots', serif;
+    font-size: 28px;
+}
 
-// Funcție pentru amestecarea unui array (Fisher-Yates shuffle)
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+/* Navigation */
+nav ul {
+    background: #444;
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0;
+}
+
+nav ul li a {
+    color: #fff;
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    background: #555;
+}
+
+/* Main Content */
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+/* Footer */
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Containerul care conține imaginea */
+.container {
+    display: flex;
+    justify-content: center; /* Centrează pe orizontală */
+    align-items: center; /* Centrează pe verticală */
+    height: 45vh; /* Înălțimea containerului este 100% din înălțimea ferestrei */
+}
+
+/* Imaginea */
+img {
+    max-width: 100%; /* Asigură-te că imaginea se redimensionează corect */
+    height: 100%; /* Păstrează proporțiile imaginii */
+}
+
+/* Starea inițială: invizibil */
+#recaptcha-overlay {
+    opacity: 0; /* Pornește complet invizibil */
+    transition: opacity 1.5s ease; /* Tranziție pentru fade-in */
+}
+
+/* După ce începe animația */
+#recaptcha-overlay.fade-in {
+    opacity: 1; /* Devine complet vizibil */
+}
+
+/* Main Content */
+#main-content {
+    display: none; /* Inițial ascuns */
+    opacity: 0;
+    transition: opacity 2.5s ease; /* Animatie de fade-in */
+}
+
+#main-content.visible {
+    display: block;
+    opacity: 1; /* Fă-l vizibil gradual */
+}
+
+/* Overlay (Recaptcha) */
+#recaptcha-overlay {
+    opacity: 1; /* Inițial vizibil */
+    transition: opacity 3.5s ease; /* Tranziție pentru fade-out */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65); /* Semi-transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    color: #fff;
+}
+
+/* Când overlay-ul dispare */
+#recaptcha-overlay.hidden {
+    opacity: 0; /* Face overlay-ul invizibil */
+    pointer-events: none; /* Dezactivează interacțiunile */
+}
+
+/* Animație de zbor pentru reCaptcha */
+#recaptcha {
+    background: #333;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    animation: flyAway 2.5s ease forwards, fadeIn 2s ease forwards; /* Animație de fade-in după zbor */
+}
+
+/* Keyframes pentru animația de zbor (de jos în sus) */
+@keyframes flyAway {
+    0% {
+        transform: translateY(50vh); /* începe din partea de jos a ecranului */
+    }
+    100% {
+        transform: translateY(0); /* Se oprește în mijlocul ecranului */
     }
 }
 
-// Selectează 1 compliment corect și 3 complimente greșite
-const correctCompliments = compliments.filter(c => c.correct);
-const wrongCompliments = compliments.filter(c => !c.correct);
+/* Keyframes pentru fade-in */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 
-// Alegem 1 compliment corect
-const selectedCompliments = [];
-const correct = correctCompliments[Math.floor(Math.random() * correctCompliments.length)];
-selectedCompliments.push(correct);
+/* Compliments */
+#compliments {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
 
-// Eliminăm complimentul corect din lista generală
-const remainingCompliments = compliments.filter(c => c !== correct);
+.compliment {
+    background: #e0f7fa;
+    color: #00796b;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
 
-// Alegem 3 complimente greșite unice
-const shuffledWrong = wrongCompliments.slice(); // Copie a listei greșite
-shuffleArray(shuffledWrong);
-selectedCompliments.push(...shuffledWrong.slice(0, 3));
+.compliment:hover {
+    transform: scale(1.1);
+    background: #b2dfdb;
+}
 
-// Amestecă cele 4 complimente selectate
-shuffleArray(selectedCompliments);
+.compliment.correct {
+    background: #c8e6c9;
+    color: #2e7d32;
+}
 
-// Afișează cele 4 complimente selectate
-selectedCompliments.forEach(compliment => {
-    const div = document.createElement("div");
-    div.className = "compliment";
-    div.textContent = compliment.text;
+.compliment.wrong {
+    background: #ffcdd2;
+    color: #c62828;
+}
 
-    div.addEventListener("click", () => {
-        // Resetează stilurile pentru toate complimentele
-        document.querySelectorAll(".compliment").forEach(el =>
-            el.classList.remove("correct", "wrong")
-        );
+/* Main Content */
+#main-content {
+    display: none; /* Hide content initially */
+}
 
-        if (compliment.correct) {
-            div.classList.add("correct");
+html {
+    scroll-behavior: smooth;
+}
 
-            // Arată imediat conținutul principal (cu animație de fade-in)
-            mainContent.classList.add("visible");
+/* Efectul de rotație pe axa Y și saritura */
+@keyframes rotateJumpY {
+    0% {
+        transform: rotateY(0deg) scale(1); /* La început, imaginea nu este rotită */
+    }
+    100% {
+        transform: rotateY(360deg) scale(1); /* La final, imaginea revine la poziția inițială */
+    }
+}
 
-            // Adaugă clasa pentru a începe animația overlay-ului
-            setTimeout(() => {
-                overlay.classList.add("hidden");
-            }, 0); // Overlay-ul începe să dispară imediat
+/* Aplica animația imaginii */
+#logo {
+    cursor: pointer; /* Arată cursorul de tip pointer pentru interactivitate */
+    transition: transform 1s ease; /* Animație lină */
+}
 
-            // Începe efectul de fade-in pentru reCaptcha
-            setTimeout(() => {
-                recaptcha.style.display = "block"; // Asigură-te că este vizibil
-                recaptcha.classList.add("fade-in"); // Adaugă clasa pentru fade-in
-            }, 0); // Începe imediat tranziția
-
-            // Începe animația de mișcare pentru reCaptcha
-            setTimeout(() => {
-                recaptcha.style.transform = "translateY(0)"; // Mișcă-l în centru
-            }, 500); // După ce efectul de fade-in începe
-
-            // După terminarea animației de dispariție
-            setTimeout(() => {
-                overlay.style.display = "none"; // Ascunde complet overlay-ul
-                document.body.style.overflow = "auto"; // Permite scroll-ul
-            }, 2500); // După finalizarea animației de dispariție (2.5 secunde)
-        } else {
-            // Subliniază răspunsul greșit
-            div.classList.add("wrong");
-            setTimeout(() => {
-                document.querySelectorAll(".compliment").forEach(el =>
-                    el.classList.remove("correct", "wrong")
-                );
-            }, 1000); // Reset după 1 secundă
-        }
-    });
-
-    complimentsContainer.appendChild(div);
-});
+/* Stil pentru a face click-ul inactiv în timpul animației */
+#logo.no-click {
+    pointer-events: none; /* Dezactivează interacțiunea cu imaginea */
+}
