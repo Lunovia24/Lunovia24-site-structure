@@ -3,18 +3,34 @@ const overlay = document.getElementById("recaptcha-overlay");
 const mainContent = document.getElementById("main-content");
 const recaptcha = document.getElementById("recaptcha");
 const logo = document.getElementById('logo');
+const buttons = document.querySelectorAll('.button'); // Presupunând că butoanele au clasa 'button'
 
-logo.addEventListener('click', function() {
-    // Dezactivează click-ul pe perioada animației
+// Funcție de blocare a interacțiunii (pentru logo și butoane)
+function disableInteraction() {
+    // Blochează interacțiunea cu logo și butoane
     logo.classList.add('no-click');
+    buttons.forEach(button => button.classList.add('no-click'));
+}
+
+// Funcție de reactualizare a interacțiunii (după animație)
+function enableInteraction() {
+    // Permite interacțiunea cu logo și butoane
+    logo.classList.remove('no-click');
+    buttons.forEach(button => button.classList.remove('no-click'));
+}
+
+// Logo-ul are un eveniment de click
+logo.addEventListener('click', function() {
+    // Dezactivează interacțiunea cu logo și butoane
+    disableInteraction();
     
     // Aplică animația de rotație și "saritura" pe axa Y
     logo.style.animation = 'rotateJumpY 1s ease forwards';
     
-    // După terminarea animației, activează din nou click-ul
+    // După terminarea animației de rotație, reactualizează interacțiunea
     setTimeout(function() {
-        logo.classList.remove('no-click');
         logo.style.animation = ''; // Resetează animația
+        enableInteraction(); // Permite din nou click-ul
     }, 1000); // Timpul de durată al animației (1s)
 });
 
@@ -96,6 +112,9 @@ selectedCompliments.forEach(compliment => {
             setTimeout(() => {
                 overlay.style.display = "none"; // Ascunde complet overlay-ul
                 document.body.style.overflow = "auto"; // Permite scroll-ul
+
+                // Permite interacțiunea cu butoanele și imaginea
+                enableInteraction();
             }, 2500); // După finalizarea animației de dispariție (2.5 secunde)
         } else {
             // Subliniază răspunsul greșit
