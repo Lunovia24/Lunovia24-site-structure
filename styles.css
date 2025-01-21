@@ -71,7 +71,7 @@ footer {
 /* Imaginea */
 img {
     max-width: 100%; /* Asigură-te că imaginea se redimensionează corect */
-    height: 100%; /* Păstrează proporțiile imaginii */
+    height: 125%; /* Păstrează proporțiile imaginii */
 }
 
 /* Starea inițială: invizibil */
